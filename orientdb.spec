@@ -43,7 +43,7 @@ mkdir -p $RPM_BUILD_ROOT/etc/systemd/system/
 sed -i '0,/User=.*/s//User="orientdb"/' bin/orientdb.service
 sed -i '0,/Group.*/s//Group="orientdb"/' bin/orientdb.service
 sed -i '0,/$ORIENTDB_HOME/s//\/opt\/orientdb-%{version}/' bin/orientdb.service
-install -m 755 bin/orientdb.service $RPM_BUILD_ROOT/etc/systemd/system/
+install -m 644 bin/orientdb.service $RPM_BUILD_ROOT/etc/systemd/system/
 %endif
 mkdir -p $RPM_BUILD_ROOT/var/log/orientdb
 
