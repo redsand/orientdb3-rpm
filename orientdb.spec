@@ -35,14 +35,14 @@ mkdir $RPM_BUILD_ROOT%{_prefix}/orientdb-%{version}/bin
 cp -rf {bin,config,databases,*.txt,lib,log,plugins,www} $RPM_BUILD_ROOT%{_prefix}/orientdb-%{version}/.
 %if ( 0%{?rhel} && 0%{?rhel} <= 6 )
 mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d
-sed -i 's/ORIENTDB_DIR.*/ORIENTDB_DIR="\/opt\/orientdb-%{version}"/' bin/orientdb.sh
-sed -i 's/ORIENTDB_USER.*/ORIENTDB_USER="orientdb"/' bin/orientdb.sh
+sed -i '0,/ORIENTDB_DIR.*/s//ORIENTDB_DIR="\/opt\/orientdb-%{version}"/' bin/orientdb.sh
+sed -i '0,/ORIENTDB_USER.*/s//ORIENTDB_USER="orientdb"/' bin/orientdb.sh
 install -m 755 bin/orientdb.sh $RPM_BUILD_ROOT/etc/rc.d/init.d/orientdb
 %else
 mkdir -p $RPM_BUILD_ROOT/etc/systemd/system/
-sed -i 's/User=.*/User="orientdb"/' bin/orientdb.service
-sed -i 's/Group.*/Group="orientdb"/' bin/orientdb.service
-sed -i 's/$ORIENTDB_HOME/\/opt\/orientdb-%{version}/' bin/orientdb.service
+sed -i '0,/User=.*/s//User="orientdb"/' bin/orientdb.service
+sed -i '0,/Group.*/s//Group="orientdb"/' bin/orientdb.service
+sed -i '0,/$ORIENTDB_HOME/s//\/opt\/orientdb-%{version}/' bin/orientdb.service
 install -m 755 bin/orientdb.service $RPM_BUILD_ROOT/etc/systemd/system/
 %endif
 mkdir -p $RPM_BUILD_ROOT/var/log/orientdb
