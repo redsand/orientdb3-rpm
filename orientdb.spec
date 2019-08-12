@@ -40,9 +40,25 @@ sed -i '0,/ORIENTDB_USER.*/s//ORIENTDB_USER="orientdb"/' bin/orientdb.sh
 install -m 755 bin/orientdb.sh $RPM_BUILD_ROOT/etc/rc.d/init.d/orientdb
 %else
 mkdir -p $RPM_BUILD_ROOT/etc/systemd/system/
-sed -i '0,/User=.*/s//User="orientdb"/' bin/orientdb.service
-sed -i '0,/Group.*/s//Group="orientdb"/' bin/orientdb.service
-sed -i '0,/$ORIENTDB_HOME/s//\/opt\/orientdb-%{version}/' bin/orientdb.service
+cat <<EOF > bin/orientdb.service
+# Copyright (c) OrientDB LTD (http://http://orientdb.com/)
+#
+
+[Unit]
+Description=OrientDB Server
+After=network.target
+After=syslog.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+User=orientdb
+ExecStart=/opt/orientdb/bin/dserver.sh
+Restart=on-abort
+
+EOF
 install -m 644 bin/orientdb.service $RPM_BUILD_ROOT/etc/systemd/system/
 %endif
 mkdir -p $RPM_BUILD_ROOT/var/log/orientdb
@@ -69,7 +85,7 @@ fi
 
 if [ -d "/opt/orientdb" ]; then
 	echo -n "Copying previous configs... "
-	cp -rf /opt/orientdb/config/* /opt/%{name}-%{version}/config/
+	cp -rf /opt/orientdb/config/* /opt/%{name}-%{version}/config/ 2>/dev/null
 	echo "done."
 fi
 alternatives --install /opt/orientdb orientdbhome  /opt/%{name}-%{version} %{int_version}
